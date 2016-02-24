@@ -2,6 +2,10 @@
 	#error streamer-tp requires streamer to be included.
 #endif
 
+#if !defined TP_WAIT_TIME
+	#define TP_WAIT_TIME 1000
+#endif
+
 static
 	Float:TP_AwaitingPos[MAX_PLAYERS][3],
 	TP_AwaitingTime[MAX_PLAYERS];
@@ -59,7 +63,7 @@ public OnPlayerUpdate(playerid)
 
 #define OnPlayerUpdate TP_OnPlayerUpdate
 
-stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = 1000)
+stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = TP_WAIT_TIME)
 {
 	if (!IsPlayerConnected(playerid))
 		return 0;
