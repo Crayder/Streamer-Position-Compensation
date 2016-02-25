@@ -38,7 +38,7 @@ public OnPlayerConnect(playerid)
 
 public OnPlayerUpdate(playerid)
 {
-	if (_:TP_AwaitingPos[playerid][0] && (!TP_AwaitingTime[playerid] || TP_AwaitingTime[playerid] > GetTickCount())) {
+	if (_:TP_AwaitingPos[playerid][0] && (!TP_AwaitingTime[playerid] || TP_AwaitingTime[playerid] > NetStats_GetConnectedTime(playerid))) {
 		if (TP_GetDistanceFromAwaiting(playerid) < 0.2) {
 			TogglePlayerControllable(playerid, true);
 			Streamer_ToggleItemUpdate(playerid, STREAMER_TYPE_OBJECT, true);
@@ -72,7 +72,7 @@ stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = T
 	TP_AwaitingPos[playerid][1] = Y;
 	TP_AwaitingPos[playerid][2] = Z;
 	
-	TP_AwaitingTime[playerid] = wait_time ? (GetTickCount() + wait_time) : 0;
+	TP_AwaitingTime[playerid] = wait_time ? (NetStats_GetConnectedTime(playerid) + wait_time) : 0;
 	
 	TogglePlayerControllable(playerid, false);
 	Streamer_UpdateEx(playerid, X, Y, Z, -1, -1, STREAMER_TYPE_OBJECT);
