@@ -36,6 +36,10 @@ public OnPlayerConnect(playerid)
 
 #define OnPlayerConnect TP_OnPlayerConnect
 
+#if defined TP_OnPlayerConnect
+    forward TP_OnPlayerConnect(playerid);
+#endif
+
 public OnPlayerUpdate(playerid)
 {
 	if (_:TP_AwaitingPos[playerid][0] && (!TP_AwaitingTime[playerid] || TP_AwaitingTime[playerid] > NetStats_GetConnectedTime(playerid))) {
@@ -62,6 +66,10 @@ public OnPlayerUpdate(playerid)
 #endif
 
 #define OnPlayerUpdate TP_OnPlayerUpdate
+
+#if defined TP_OnPlayerUpdate
+    forward TP_OnPlayerUpdate(playerid);
+#endif
 
 stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = TP_WAIT_TIME)
 {
