@@ -19,7 +19,7 @@ static Float:TP_GetDistanceFromAwaiting(playerid)
 
 public OnPlayerConnect(playerid)
 {
-	TP_AwaitingPos[playerid][0] = 0.0;
+	TP_AwaitingPos[playerid][0] = -1.0;
 	
 	#if defined TP_OnPlayerConnect
 		return TP_OnPlayerConnect(playerid);
@@ -42,12 +42,14 @@ public OnPlayerConnect(playerid)
 
 public OnPlayerUpdate(playerid)
 {
-	if (_:TP_AwaitingPos[playerid][0] && (!TP_AwaitingTime[playerid] || TP_AwaitingTime[playerid] > NetStats_GetConnectedTime(playerid))) {
-		if (TP_GetDistanceFromAwaiting(playerid) < 0.2) {
+	if (TP_AwaitingPos[playerid][0] != -1.0) {
+		//SendClientMessage(playerid, -1, "Awaiting");
+		if ((TP_AwaitingTime[playerid] && TP_AwaitingTime[playerid] > NetStats_GetConnectedTime(playerid)) || TP_GetDistanceFromAwaiting(playerid) < 0.2) {
+			//SendClientMessage(playerid, -1, "Less Than");
 			TogglePlayerControllable(playerid, true);
 			Streamer_ToggleItemUpdate(playerid, STREAMER_TYPE_OBJECT, true);
 			
-			TP_AwaitingPos[playerid][0] = 0.0;
+			TP_AwaitingPos[playerid][0] = -1.0;
 			TP_AwaitingTime[playerid] = 0;
 		}
 	}
