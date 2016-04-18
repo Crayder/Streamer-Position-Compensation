@@ -73,7 +73,7 @@ public OnPlayerUpdate(playerid)
     forward TP_OnPlayerUpdate(playerid);
 #endif
 
-stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = TP_WAIT_TIME)
+stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = TP_WAIT_TIME, worldid = -1, interior = -1)
 {
 	if (!IsPlayerConnected(playerid))
 		return 0;
@@ -85,7 +85,7 @@ stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = T
 	TP_AwaitingTime[playerid] = wait_time ? (NetStats_GetConnectedTime(playerid) + wait_time) : 0;
 	
 	TogglePlayerControllable(playerid, false);
-	Streamer_UpdateEx(playerid, X, Y, Z, -1, -1, STREAMER_TYPE_OBJECT);
+	Streamer_UpdateEx(playerid, X, Y, Z, worldid, interior, STREAMER_TYPE_OBJECT);
 	Streamer_ToggleItemUpdate(playerid, STREAMER_TYPE_OBJECT, false);
 	
 	return SetPlayerPos(playerid, X, Y, Z - 0.3);
