@@ -7,8 +7,8 @@
 #endif
 
 static
-	Float:TP_AwaitingPos[MAX_PLAYERS][3],
-	TP_AwaitingTime[MAX_PLAYERS];
+	TP_AwaitingTime[MAX_PLAYERS],
+	Float:TP_AwaitingPos[MAX_PLAYERS][3];
 
 static Float:TP_GetDistanceFromAwaiting(playerid)
 {
@@ -42,10 +42,10 @@ public OnPlayerConnect(playerid)
 
 public OnPlayerUpdate(playerid)
 {
-	if (TP_AwaitingPos[playerid][0] != -1.0) {
-		//SendClientMessage(playerid, -1, "Awaiting");
-		if ((TP_AwaitingTime[playerid] && TP_AwaitingTime[playerid] > NetStats_GetConnectedTime(playerid)) || TP_GetDistanceFromAwaiting(playerid) < 0.2) {
-			//SendClientMessage(playerid, -1, "Less Than");
+	if (TP_AwaitingTime[playerid] != 0)
+	{
+		if ((NetStats_GetConnectedTime(playerid) > TP_AwaitingTime[playerid]) || (TP_GetDistanceFromAwaiting(playerid) < 0.2))
+		{
 			TogglePlayerControllable(playerid, true);
 			Streamer_ToggleItemUpdate(playerid, STREAMER_TYPE_OBJECT, true);
 			
@@ -73,7 +73,12 @@ public OnPlayerUpdate(playerid)
     forward TP_OnPlayerUpdate(playerid);
 #endif
 
-stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = TP_WAIT_TIME, worldid = -1, interior = -1)
+stock bool:IsPlayerTeleporting(playerid)
+{
+	return (TP_AwaitingTime[playerid] != 0);
+}
+
+stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = TP_WAIT_TIME, world = -1, interior = -1)
 {
 	if (!IsPlayerConnected(playerid))
 		return 0;
@@ -82,11 +87,18 @@ stock SetPlayerCompensatedPos(playerid, Float:X, Float:Y, Float:Z, wait_time = T
 	TP_AwaitingPos[playerid][1] = Y;
 	TP_AwaitingPos[playerid][2] = Z;
 	
-	TP_AwaitingTime[playerid] = wait_time ? (NetStats_GetConnectedTime(playerid) + wait_time) : 0;
+	new conn_time = NetStats_GetConnectedTime(playerid);
+	TP_AwaitingTime[playerid] = ((wait_time > 0) ? (conn_time + wait_time) : conn_time);
 	
 	TogglePlayerControllable(playerid, false);
-	Streamer_UpdateEx(playerid, X, Y, Z, worldid, interior, STREAMER_TYPE_OBJECT);
 	Streamer_ToggleItemUpdate(playerid, STREAMER_TYPE_OBJECT, false);
+	
+	Streamer_UpdateEx(playerid, X, Y, Z, world, interior, STREAMER_TYPE_OBJECT);
+	
+	if(interior != -1)
+		SetPlayerInterior(playerid, interior);
+	if(world != -1)
+		SetPlayerVirtualWorld(playerid, world);
 	
 	return SetPlayerPos(playerid, X, Y, Z - 0.3);
 }
